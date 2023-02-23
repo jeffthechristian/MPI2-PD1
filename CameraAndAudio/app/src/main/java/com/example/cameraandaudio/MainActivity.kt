@@ -5,20 +5,28 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CaptureRequest
+import android.hardware.camera2.MultiResolutionImageReader
+import android.media.ImageReader
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.HandlerThread
 import android.view.Menu
 import android.view.MenuItem
 import android.view.Surface
 import android.view.TextureView
+import android.widget.Button
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import java.io.File
+import java.io.FileOutputStream
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
@@ -31,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var cameraCaptureSession: CameraCaptureSession
     lateinit var cameraDevice: CameraDevice
     lateinit var captureRequest: CaptureRequest
+    lateinit var imageReader: ImageReader
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,14 +48,49 @@ class MainActivity : AppCompatActivity() {
         getPremissions()
 
 
+
+
         textureView = findViewById(R.id.textureView)
         cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
 
         handlerThread = HandlerThread("Thread")
         handlerThread.start()
         handler = Handler((handlerThread).looper)
-        
-        
+
+        imageReader = ImageReader.newInstance(1080, 1920, ImageFormat.JPEG, 1)
+        imageReader.setOnImageAvailableListener(object : ImageReader.OnImageAvailableListener{
+            override fun onImageAvailable(reader: ImageReader?) {
+
+                var image = reader?.acquireLatestImage()
+                var buffer = image!!.planes[0].buffer
+                var bytes = ByteArray(buffer.remaining())
+                buffer.get(bytes)
+
+                var file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "new.jpeg")
+                var opStream = FileOutputStream(file)
+
+                opStream.write(bytes)
+
+                opStream.close()
+                image.close()
+
+
+                Toast.makeText(this@MainActivity, "Image taken", Toast.LENGTH_SHORT).show()
+            }
+
+        },handler
+        )
+
+        findViewById<Button>(R.id.button).apply {
+            setOnClickListener{
+                capReq = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE)
+                capReq.addTarget(imageReader.surface)
+                cameraCaptureSession.capture(capReq.build(), null, null)
+            }
+        }
+
+
+
         textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(
                 surface: SurfaceTexture,
@@ -127,7 +171,7 @@ class MainActivity : AppCompatActivity() {
                 val surface = Surface(textureView.surfaceTexture)
                 capReq.addTarget(surface)
 
-                cameraDevice.createCaptureSession(listOf(surface), object :
+                cameraDevice.createCaptureSession(listOf(surface, imageReader.surface), object :
                     CameraCaptureSession.StateCallback() {
                     override fun onConfigured(session: CameraCaptureSession) {
                         cameraCaptureSession = session
