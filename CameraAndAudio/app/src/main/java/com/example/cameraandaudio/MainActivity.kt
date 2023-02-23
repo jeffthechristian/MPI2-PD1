@@ -115,6 +115,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraDevice.close()
+        handler.removeCallbacksAndMessages(null)
+        handlerThread.quitSafely()
+    }
   private fun getPremissions(){
         var permissionList = mutableListOf<String>()
 
@@ -144,8 +151,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     fun openCamera(){
         if (ActivityCompat.checkSelfPermission(
