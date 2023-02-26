@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var textureView: TextureView
     lateinit var cameraCaptureSession: CameraCaptureSession
     lateinit var cameraDevice: CameraDevice
-    lateinit var captureRequest: CaptureRequest
     lateinit var imageReader: ImageReader
 
 
