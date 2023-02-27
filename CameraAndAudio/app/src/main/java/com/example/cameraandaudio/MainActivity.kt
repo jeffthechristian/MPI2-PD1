@@ -26,6 +26,8 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import java.io.File
 import java.io.FileOutputStream
 
@@ -70,6 +72,7 @@ class MainActivity : AppCompatActivity() {
                 var bytes = ByteArray(buffer.remaining())
                 buffer.get(bytes)
 
+
                 file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${System.currentTimeMillis()}.jpeg")
                 path = file.parentFile.path
                 var opStream = FileOutputStream(file)
@@ -85,6 +88,7 @@ class MainActivity : AppCompatActivity() {
 
         },handler
         )
+
 
         findViewById<Button>(R.id.button).apply {
             setOnClickListener{
