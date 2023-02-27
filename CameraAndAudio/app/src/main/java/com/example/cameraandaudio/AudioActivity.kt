@@ -15,6 +15,10 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import java.io.File
 
 class AudioActivity : AppCompatActivity() {
@@ -27,9 +31,13 @@ class AudioActivity : AppCompatActivity() {
     private var isRecording = false
     var path = ""
 
+    private lateinit var analytics: FirebaseAnalytics
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audio)
+
+        analytics = Firebase.analytics
 
         audioList = ArrayList()
         audioListAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, audioList)
@@ -80,6 +88,8 @@ class AudioActivity : AppCompatActivity() {
         val butto = findViewById<Button>(R.id.startButton)
         butto.text = "Stop"
         Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show()
+
+        Firebase.analytics.logEvent("audio_recording", bundleOf("action" to "start"))
     }
 
     private fun stopRecording() {
@@ -92,6 +102,8 @@ class AudioActivity : AppCompatActivity() {
         val butt = findViewById<Button>(R.id.startButton)
         butt.text = "Rec"
         Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
+
+        Firebase.analytics.logEvent("audio_recording", bundleOf("action" to "stop"))
     }
 
     private fun checkPermission(): Boolean {

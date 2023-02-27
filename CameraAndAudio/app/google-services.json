@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "857627048717",
+    "project_id": "cameraandaudio-83535",
+    "storage_bucket": "cameraandaudio-83535.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857627048717:android:4d0405a99b0104db550e44",
+        "android_client_info": {
+          "package_name": "com.example.cameraandaudio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "857627048717-6d4jfkv0c520tladgi7cklvvb7mkvcbf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1N-PziVyMtneOUKeO5Vt9oc30MhQqfic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "857627048717-6d4jfkv0c520tladgi7cklvvb7mkvcbf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
