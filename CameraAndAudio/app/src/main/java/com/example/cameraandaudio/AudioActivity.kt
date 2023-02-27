@@ -3,6 +3,7 @@ package com.example.cameraandaudio
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -52,6 +53,13 @@ class AudioActivity : AppCompatActivity() {
         button.setOnClickListener {
             toggleRecording()
         }
+        audioListView.setOnItemClickListener { parent, view, position, id ->
+            val selectedItem = parent.getItemAtPosition(position) as String
+            val mediaPlayer = MediaPlayer()
+            mediaPlayer.setDataSource(selectedItem)
+            mediaPlayer.prepare()
+            mediaPlayer.start()
+        }
 
     }
 
@@ -77,7 +85,7 @@ class AudioActivity : AppCompatActivity() {
     private fun stopRecording() {
         recorder.stop()
         recorder.release()
-        audioList.add(audioFile.name)
+        audioList.add(audioFile.absolutePath)
         path = audioFile.parentFile.path
         audioListAdapter.notifyDataSetChanged()
         isRecording = false
