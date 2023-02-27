@@ -24,6 +24,7 @@ class AudioActivity : AppCompatActivity() {
     private lateinit var audioListAdapter: ArrayAdapter<String>
     private lateinit var audioListView: ListView
     private var isRecording = false
+    var path = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +78,7 @@ class AudioActivity : AppCompatActivity() {
         recorder.stop()
         recorder.release()
         audioList.add(audioFile.name)
+        path = audioFile.parentFile.path
         audioListAdapter.notifyDataSetChanged()
         isRecording = false
         val butt = findViewById<Button>(R.id.startButton)
@@ -102,7 +104,7 @@ class AudioActivity : AppCompatActivity() {
         }
     }
     private fun deleteDirectory() {
-        val directory = File("")
+        val directory = File(path)
         directory.listFiles()
             .filterNot { it.isDirectory }
             .forEach { it.delete() }
@@ -127,6 +129,7 @@ class AudioActivity : AppCompatActivity() {
 
                 audioList.clear()
                 audioListAdapter.notifyDataSetChanged()
+                deleteDirectory()
 
                 true
             }
