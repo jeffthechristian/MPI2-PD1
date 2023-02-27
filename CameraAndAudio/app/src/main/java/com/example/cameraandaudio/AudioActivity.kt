@@ -8,9 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ListView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.io.File
@@ -22,6 +23,7 @@ class AudioActivity : AppCompatActivity() {
     private lateinit var audioList: ArrayList<String>
     private lateinit var audioListAdapter: ArrayAdapter<String>
     private lateinit var audioListView: ListView
+    private var isRecording = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,12 @@ class AudioActivity : AppCompatActivity() {
                 111
             )
         }
+
+        val button = findViewById<Button>(R.id.startButton)
+        button.setOnClickListener {
+            toggleRecording()
+        }
+
     }
 
     private fun initRecorder() {
@@ -59,12 +67,21 @@ class AudioActivity : AppCompatActivity() {
         initRecorder()
         recorder.prepare()
         recorder.start()
+        isRecording = true
+        val butto = findViewById<Button>(R.id.startButton)
+        butto.text = "Stop"
+        Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show()
     }
 
     private fun stopRecording() {
         recorder.stop()
+        recorder.release()
         audioList.add(audioFile.name)
         audioListAdapter.notifyDataSetChanged()
+        isRecording = false
+        val butt = findViewById<Button>(R.id.startButton)
+        butt.text = "Rec"
+        Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
     }
 
     private fun checkPermission(): Boolean {
@@ -77,13 +94,23 @@ class AudioActivity : AppCompatActivity() {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ) == PackageManager.PERMISSION_GRANTED
     }
-
-    fun onRecordButtonClick(view: View) {
-        when (view.id) {
-            R.id.startButton -> startRecording()
-            R.id.stopButton -> stopRecording()
+    private fun toggleRecording() {
+        if (isRecording) {
+            stopRecording()
+        } else {
+            startRecording()
         }
     }
+    private fun deleteDirectory() {
+        val directory = File("")
+        directory.listFiles()
+            .filterNot { it.isDirectory }
+            .forEach { it.delete() }
+    }
+
+
+
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_audio, menu)
@@ -94,6 +121,13 @@ class AudioActivity : AppCompatActivity() {
             R.id.image ->{
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
+                true
+            }
+            R.id.delete ->{
+
+                audioList.clear()
+                audioListAdapter.notifyDataSetChanged()
+
                 true
             }
             else -> super.onOptionsItemSelected(item)

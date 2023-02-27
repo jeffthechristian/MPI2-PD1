@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var imageReader: ImageReader
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -211,5 +212,4 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 }
