@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                 var bytes = ByteArray(buffer.remaining())
                 buffer.get(bytes)
 
-                var file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "new.jpeg")
+                var file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${System.currentTimeMillis()}.jpeg")
                 var opStream = FileOutputStream(file)
 
                 opStream.write(bytes)
@@ -209,6 +209,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
