@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCaptureSession
@@ -18,13 +19,13 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.HandlerThread
-import android.view.Menu
-import android.view.MenuItem
-import android.view.Surface
-import android.view.TextureView
+import android.view.*
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import java.io.File
 import java.io.FileOutputStream
 
@@ -40,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var cameraDevice: CameraDevice
     lateinit var captureRequest: CaptureRequest
     lateinit var imageReader: ImageReader
+    private var path = ""
+    private lateinit var file: File
 
 
 
@@ -67,7 +70,8 @@ class MainActivity : AppCompatActivity() {
                 var bytes = ByteArray(buffer.remaining())
                 buffer.get(bytes)
 
-                var file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${System.currentTimeMillis()}.jpeg")
+                file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${System.currentTimeMillis()}.jpeg")
+                path = file.parentFile.path
                 var opStream = FileOutputStream(file)
 
                 opStream.write(bytes)
@@ -153,6 +157,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     fun openCamera(){
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -198,6 +204,14 @@ class MainActivity : AppCompatActivity() {
             }
         }, handler)
     }
+
+    private fun deleteDirectory() {
+        val directory = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),"")
+        directory.listFiles()
+            .filterNot { it.isDirectory }
+            .forEach { it.delete() }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return true
@@ -207,6 +221,18 @@ class MainActivity : AppCompatActivity() {
             R.id.audio ->{
                 val intent = Intent(this, AudioActivity::class.java)
                 startActivity(intent)
+                true
+            }
+            R.id.show ->{
+                val intent = Intent(this, ViewActivity::class.java)
+                startActivity(intent)
+
+                true
+            }
+            R.id.delete->{
+                deleteDirectory()
+                Toast.makeText(this@MainActivity, "Image delete", Toast.LENGTH_SHORT).show()
+
                 true
             }
 

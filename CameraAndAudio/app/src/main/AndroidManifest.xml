@@ -21,7 +21,7 @@
         android:theme="@style/Theme.CameraAndAudio"
         tools:targetApi="31">
         <activity
-            android:name=".Show"
+            android:name=".ViewActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
